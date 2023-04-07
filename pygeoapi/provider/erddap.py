@@ -78,24 +78,24 @@ class TabledapProvider(BaseProvider):
               select_properties=[], skip_geometry=False, q=None,
               filterq=None, **kwargs):
 
+        query_params = []
+
         max_age_hours = self.options.get('max_age_hours')
         url = f'{self.data}.geoJson'
 
         if self.filters is not None:
             LOGGER.debug(f'Setting filters ({self.filters})')
-            url = f'{url}?{self.filters}'
+            query_params.append(self.filters)
 
         if max_age_hours is not None:
             LOGGER.debug(f'Setting default time filter {max_age_hours} hours')
             currenttime = datetime.now(timezone.utc)
             mintime = currenttime - timedelta(hours=max_age_hours)
             mintime = mintime.strftime('%Y-%m-%dT%H:%M:%SZ')
-            timefilter = f'&time>={mintime}'
-            url = f'{url}{timefilter}'
+            query_params.append(f'time>={mintime}')
 
         elif datetime_ is not None:
             LOGGER.debug('Setting datetime filters')
-            timefilter = ''
 
             LOGGER.debug('Setting datetime filters')
             if '/' in datetime_:  # envelope
@@ -104,19 +104,23 @@ class TabledapProvider(BaseProvider):
 
                 if time_begin != '..':
                     LOGGER.debug('Setting time_begin')
-                    timefilter = f'&time<={time_begin}'
+                    query_params.append(f'time<={time_begin}')
                 if time_end != '..':
                     LOGGER.debug('Setting time_end')
-                    timefilter += f'&time>={time_end}'
+                    query_params.append(f'time>={time_end}')
             else:
-                timefilter = f'&time={datetime_}'
-
-            url = f'{url}{timefilter}'
+                query_params.append(f'time={datetime_}')
 
         if bbox:
             LOGGER.debug('Setting bbox')
-            bboxfilter = f'&latitude>={bbox[1]}&latitude<={bbox[3]}&longitude>={bbox[0]}&longitude<={bbox[2]}'  # noqa
-            url = f'{url}{bboxfilter}'
+            query_params.extend([
+                f'latitude>={bbox[1]}',
+                f'latitude<={bbox[3]}',
+                f'longitude>={bbox[0]}',
+                f'longitude<={bbox[2]}'
+            ])
+
+        url = f'{url}?{"&".join(query_params)}'
 
         LOGGER.debug(f'Fetching data from {url}')
         response = requests.get(url)
@@ -154,18 +158,23 @@ class TabledapProvider(BaseProvider):
         }
 
     def get(self, identifier, **kwargs):
+
+        query_params = []
+
         url = f'{self.data}.geoJson'
 
-        station_id, obs_time = identifier.split('.')
-
-        id_filter = f'time={obs_time}&{self.id_field}=%22{station_id}%22'  # noqa
-
         if self.filters is not None:
-            url = f'{url}?{self.filters}&{id_filter}'
-        else:
-            url = f'{url}?{id_filter}'
+            LOGGER.debug(f'Setting filters ({self.filters})')
+            query_params.append(self.filters)
 
-        LOGGER.debug(f'Fetching data from {url}')
+        id_, obs_time = identifier.split('.')
+
+        query_params.extend([
+            f'time={obs_time}',
+            f'{self.id_field}=%22{id_}%22'
+        ])
+
+        url = f'{url}?{"&".join(query_params)}'
         LOGGER.debug(f'Fetching data from {url}')
 
         response = requests.get(url)
