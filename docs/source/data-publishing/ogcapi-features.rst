@@ -379,7 +379,7 @@ relies on `sodapy <https://github.com/xmunoz/sodapy>`.
          token: my_token # Optional app token
 
 
-.. _EERDDAP Tabledap Service:
+.. _ERDDAP Tabledap Service:
 
 ERDDAP Tabledap Service
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -403,7 +403,7 @@ To publish from an ERDDAP `Tabledap`_ service, the following are required in you
 
 
 .. note::
-   If `datetime` is passed by the client, this overrides the ``options.max_age_hours`` setting.
+   If the ``datetime`` parameter is passed by the client, this overrides the ``options.max_age_hours`` setting.
 
 Controlling the order of properties
 -----------------------------------
