@@ -35,10 +35,13 @@ import os
 import click
 
 from flask import Flask, Blueprint, make_response, request, send_from_directory
+from werkzeug.datastructures import MultiDict
 
 from pygeoapi.api import API
-from pygeoapi.util import get_mimetype, yaml_load, get_api_rules
+from pygeoapi.util import get_mimetype, yaml_load
 
+
+CONFIG = None
 
 if 'PYGEOAPI_CONFIG' not in os.environ:
     raise RuntimeError('PYGEOAPI_CONFIG environment variable not set')
@@ -46,21 +49,14 @@ if 'PYGEOAPI_CONFIG' not in os.environ:
 with open(os.environ.get('PYGEOAPI_CONFIG'), encoding='utf8') as fh:
     CONFIG = yaml_load(fh)
 
-API_RULES = get_api_rules(CONFIG)
-
 STATIC_FOLDER = 'static'
 if 'templates' in CONFIG['server']:
     STATIC_FOLDER = CONFIG['server']['templates'].get('static', 'static')
 
 APP = Flask(__name__, static_folder=STATIC_FOLDER, static_url_path='/static')
-APP.url_map.strict_slashes = API_RULES.strict_slashes
+APP.url_map.strict_slashes = False
 
-BLUEPRINT = Blueprint(
-    'pygeoapi',
-    __name__,
-    static_folder=STATIC_FOLDER,
-    url_prefix=API_RULES.get_url_prefix('flask')
-)
+BLUEPRINT = Blueprint('pygeoapi', __name__, static_folder=STATIC_FOLDER)
 
 # CORS: optionally enable from config.
 if CONFIG['server'].get('cors', False):
@@ -201,6 +197,9 @@ def collection_items(collection_id, item_id=None):
 
     if item_id is None:
         if request.method == 'GET':  # list items
+            print(request.args)
+            for key, value in request.args.items():
+                print(f"{key}: {value}")
             return get_response(
                 api_.get_collection_items(request, collection_id))
         elif request.method == 'POST':  # filter or manage items
@@ -352,6 +351,50 @@ def get_processes(process_id=None):
     :returns: HTTP response
     """
     return get_response(api_.describe_processes(request, process_id))
+
+
+@BLUEPRINT.route('/vocabularies')
+@BLUEPRINT.route('/vocabularies/<path:vocab_id>')
+def get_vocab(vocab_id=None):
+    """
+    OGC API - Processes description endpoint
+
+    :param process_id: process identifier
+
+    :returns: HTTP response
+    """
+    if vocab_id is None:
+        return get_response(api_.describe_vocabularies(request, vocab_id))
+    else:
+        if request.method == 'GET':  # list items
+            return get_response(
+                api_.get_vocabulary_items(request, vocab_id))
+
+
+
+@BLUEPRINT.route('/vocabularies/<path:vocab_id>/items',
+                 methods=['GET', 'POST', 'OPTIONS'],
+                 provide_automatic_options=False)
+@BLUEPRINT.route('/vocabularies/<path:vocab_id>/items/<path:item_id>',
+                 methods=['GET'],
+                 provide_automatic_options=False)
+def vocab_items(vocab_id, item_id=None):
+    """
+    OGC API collections items endpoint
+
+    :param collection_id: collection identifier
+    :param item_id: item identifier
+
+    :returns: HTTP response
+    """
+
+    if item_id is None:
+        if request.method == 'GET':  # list items
+            return get_response(
+                api_.get_vocabulary_items(request, vocab_id))
+    else:
+        return get_response(
+            api_.get_vocabulary_item(request, vocab_id, item_id))
 
 
 @BLUEPRINT.route('/jobs')

@@ -1,0 +1,13 @@
+fiona
+#GDAL>=3.0.0
+netCDF4
+pandas; python_version < '3.7'
+pandas==1.2.5; python_version >= '3.7'
+pygeofilter[backend-sqlalchemy]
+pygeoif==1.0.0
+pygeometa
+scipy
+sodapy
+xarray
+zarr
+flask-cors

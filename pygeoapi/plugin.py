@@ -2,7 +2,7 @@
 #
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
 #
-# Copyright (c) 2023 Tom Kralidis
+# Copyright (c) 2022 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -38,37 +38,37 @@ LOGGER = logging.getLogger(__name__)
 #: formatters and processes available
 PLUGINS = {
     'provider': {
-        'AzureBlobStorage': 'pygeoapi.provider.azure_.AzureBlobStorageProvider',  # noqa
         'CSV': 'pygeoapi.provider.csv_.CSVProvider',
         'Elasticsearch': 'pygeoapi.provider.elasticsearch_.ElasticsearchProvider',  # noqa
         'ElasticsearchCatalogue': 'pygeoapi.provider.elasticsearch_.ElasticsearchCatalogueProvider',  # noqa
         'ESRI': 'pygeoapi.provider.esri.ESRIServiceProvider',
-        'FileSystem': 'pygeoapi.provider.filesystem.FileSystemProvider',
         'GeoJSON': 'pygeoapi.provider.geojson.GeoJSONProvider',
-        'Hateoas': 'pygeoapi.provider.hateoas.HateoasProvider',
-        'MapScript': 'pygeoapi.provider.mapscript_.MapScriptProvider',
-        'MongoDB': 'pygeoapi.provider.mongo.MongoProvider',
-        'MVT': 'pygeoapi.provider.mvt.MVTProvider',
         'OGR': 'pygeoapi.provider.ogr.OGRProvider',
         'PostgreSQL': 'pygeoapi.provider.postgresql.PostgreSQLProvider',
-        'rasterio': 'pygeoapi.provider.rasterio_.RasterioProvider',
-        'SensorThings': 'pygeoapi.provider.sensorthings.SensorThingsProvider',
+        'PostGIS': 'pygeoapi.provider.postgis.PostGISProvider',
         'SQLiteGPKG': 'pygeoapi.provider.sqlite.SQLiteGPKGProvider',
-        'Socrata': 'pygeoapi.provider.socrata.SODAServiceProvider',
-        'TinyDBCatalogue': 'pygeoapi.provider.tinydb_.TinyDBCatalogueProvider',
-        'WMSFacade': 'pygeoapi.provider.wms_facade.WMSFacadeProvider',
+        'MongoDB': 'pygeoapi.provider.mongo.MongoProvider',
+        'FileSystem': 'pygeoapi.provider.filesystem.FileSystemProvider',
+        'Hateoas': 'pygeoapi.provider.hateoas.HateoasProvider',
+        'rasterio': 'pygeoapi.provider.rasterio_.RasterioProvider',
         'xarray': 'pygeoapi.provider.xarray_.XarrayProvider',
+        'MapScript': 'pygeoapi.provider.mapscript_.MapScriptProvider',
+        'WMSFacade': 'pygeoapi.provider.wms_facade.WMSFacadeProvider',
+        'MVT': 'pygeoapi.provider.mvt.MVTProvider',
+        'TinyDBCatalogue': 'pygeoapi.provider.tinydb_.TinyDBCatalogueProvider',
+        'SensorThings': 'pygeoapi.provider.sensorthings.SensorThingsProvider',
+        'Socrata': 'pygeoapi.provider.socrata.SODAServiceProvider',
         'xarray-edr': 'pygeoapi.provider.xarray_edr.XarrayEDRProvider'
     },
     'formatter': {
-        'CSV': 'pygeoapi.formatter.csv_.CSVFormatter'
+        'CSV': 'pygeoapi.formatter.csv_.CSVFormatter',
+        'CSVTable': 'pygeoapi.formatter.csvTable.CSVFormatter'
     },
     'process': {
         'HelloWorld': 'pygeoapi.process.hello_world.HelloWorldProcessor'
     },
     'process_manager': {
         'Dummy': 'pygeoapi.process.manager.dummy.DummyManager',
-        'MongoDB': 'pygeoapi.process.manager.mongodb_.MongoDBManager',
         'TinyDB': 'pygeoapi.process.manager.tinydb_.TinyDBManager'
     }
 }
