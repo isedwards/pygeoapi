@@ -49,6 +49,12 @@
       <a href="{{ config['server']['url'] }}/collections?f=html">{% trans %}View the collections in this service{% endtrans %}</a>
     </p>
   </section>
+  <section id="vocabularies">
+    <h2>{% trans %}Vocabularies{% endtrans %}</h2>
+    <p>
+      <a href="{{ config['server']['url'] }}/vocabularies?f=html">{% trans %}View the vocabularies in this service{% endtrans %}</a>
+    </p>
+  </section>
  {% if data['stac'] %}
   <section id="collections">
     <h2>{% trans %}SpatioTemporal Assets{% endtrans %}</h2>
