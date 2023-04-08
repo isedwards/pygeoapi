@@ -104,10 +104,10 @@ class TabledapProvider(BaseProvider):
 
                 if time_begin != '..':
                     LOGGER.debug('Setting time_begin')
-                    query_params.append(f'time<={time_begin}')
+                    query_params.append(f'time>={time_begin}')
                 if time_end != '..':
                     LOGGER.debug('Setting time_end')
-                    query_params.append(f'time>={time_end}')
+                    query_params.append(f'time<={time_end}')
             else:
                 query_params.append(f'time={datetime_}')
 
